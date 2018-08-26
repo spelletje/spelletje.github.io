@@ -5,6 +5,7 @@ var context = canvas.getContext("2d");
 //the game mode of choice
 var modus;
 var g1; var g2; var g3; var g4; var g5;
+//g1 = snijdertje, g2 = solo, g3 = duo, g4 = team g5 = versus
 
 //X & Y values of the balls
 var xPosPurple; var yPosPurple;
@@ -19,13 +20,9 @@ var movePurple;
 //will call the draw function every 5 milliseconds
 var refresh;
 
-//scores
-var blueScore = 0;
-var redScore = 0;
-var PurpleScore = 0;
-
 //controls
 var zqsd = true;
+
 
 //SNIJDERTJE variables
 var hunter = "Purple";
@@ -34,6 +31,7 @@ var other = "red";
 var xPosHunter = xPosPurple; var yPosHunter = yPosPurple;
 var xPosPrey = xPosBlue; var yPosPrey = yPosBlue;
 var xPosOther = xPosRed; var yPosOther = yPosRed;
+var blueScore = 0; var redScore = 0; var PurpleScore = 0;
 
 
 //SOLO, DUO, TEAM variables
@@ -43,7 +41,7 @@ var enemyYposArray = []; var enemyXposArray = [];
 var blueHit = false; var redHit = false;
 var ballCountBlue = 0; var ballCountRed = 0; var ballCountDiff = 0;
 var eatCount = 0;
-var blueCount = 0; var redCount = 0;
+var blueCountDuo = 0; var redCountDuo = 0;
 
 
 //VERSUS variables
@@ -54,6 +52,7 @@ var shootCount = 0; var shootCountBlue = 0; var shootCountRed = 0;
 var hold = [false, false, false, false, false, false, false, false];
 var distanceBalls = [];
 var ballStop = [];
+var blueCountVersus = 0; var redCountVersus = 0;
 
 
 function start (){
@@ -61,37 +60,64 @@ function start (){
 	canvas.setAttribute("width", window.innerWidth);
 	canvas.setAttribute("height", window.innerHeight);
 
-	modus = prompt("Welke spelmodus wil je spelen? Snijdertje(1), Solo(2), Duo(3), Team(4) of Versus(5). Typ de naam of het nummer in om te kiezen, duw ESC om opnieuw te kiezen.");
+	//reset values
+	hunter = "Purple";
+	prey = "blue";
+	other = "red";
+	xPosHunter = xPosPurple; yPosHunter = yPosPurple;
+	xPosPrey = xPosBlue; yPosPrey = yPosBlue;
+	xPosOther = xPosRed; yPosOther = yPosRed;
+	blueScore = 0; redScore = 0; PurpleScore = 0;
 
-	if(modus == "1" || modus == "Snijdertje"  || modus == "snijdertje"){
-		g1 = true; g2 = false; g3 = false; g4 = false; g5 = false;
-		alert("Dit is een spelmodus voor 3 spelers, bestuurd door de ZQSD (Duw L.SHIFT om tussen ZQSD en WASD te switchen.) toetsen, pijltjes toetsen en de 5, 1, 2, 3 toetsen (op een numpad). Het is aangeraden om een tweede toetsenbord te koppelen om dit te spelen.");
-		alert("De regels van het spel zijn als volgt: Je hebt een jager (Groene circel rond de bal), een prooi (De bal die aan de lijn vastzit maar geen circel rond zich heeft) en een helper. Het doel van de jager is om de prooi te vangen, het doel van de prooi en de helper is om niet gepakt te worden. De helper kan de prooi helpen door de groene lijn te doorkruisen, hierdoor wordt hij de jager, en de prooi wordt de helper. De helper kan ook helpen door tegen de jager te botsen, waardoor ze allebei naar achter gestoten worden, pas alleen op voor de lijn, want als je daar in buurt komt kan je de prooi worden en gevangen worden door de jager.");
-		startCut();
-	}
-	else if(modus == "2" || modus == "Solo"  || modus == "solo"){
+	drawCount = 0;
+	ballCount = -1;
+	enemyYposArray = []; enemyXposArray = [];
+	blueHit = false; redHit = false;
+	ballCountBlue = 0; ballCountRed = 0; ballCountDiff = 0;
+	eatCount = 0;
+	blueCountDuo = 0; redCountDuo = 0;
+
+	blueShoot; redShoot;
+	xPosShootArray = []; yPosShootArray = [];
+	shootArrayDirection = []; shootArrayColor = [];
+	shootCount = 0; shootCountBlue = 0; shootCountRed = 0;
+	hold = [false, false, false, false, false, false, false, false];
+	distanceBalls = [];
+	ballStop = [];
+	blueCountVersus = 0; redCountVersus = 0;
+
+
+	modus = prompt("Welke spelmodus wil je spelen? Solo(1), Duo(2), Team(3), Versus(4) of Snijdertje(5). Typ de naam of het nummer in om te kiezen, duw ESC om opnieuw te kiezen.");
+
+	if(modus == "1" || modus == "Solo"  || modus == "solo"){
 		g1 = false; g2 = true; g3 = false; g4 = false; g5 = false;
 		alert("Dit is een spelmodus voor 1 speler, bestuurd door de pijltjes toetsen.");
 		alert("Het doel van het spel is om zo lang mogelijk te overleven door de paarse ballen to ontwijken.");
 		startSolo();
 	}
-	else if(modus == "3" || modus == "Duo"  || modus == "duo"){
+	else if(modus == "2" || modus == "Duo"  || modus == "duo"){
 		g1 = false; g2 = false; g3 = true; g4 = false; g5 = false;
 		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw L.SHIFT om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
 		alert("Het doel van het spel is om zo lang mogelijk te overleven door de paarse ballen to ontwijken, en om langer te leven dan de andere.");
 		startDT();
 	}
-	else if(modus == "4" || modus == "Team"  || modus == "team"){
+	else if(modus == "3" || modus == "Team"  || modus == "team"){
 		g1 = false; g2 = false; g3 = false; g4 = true; g5 = false;
 		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw L.SHIFT om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
 		alert("Het doel van het spel is om zo lang mogelijk te overleven door de paarse ballen to ontwijken, maar je moet samenwerken met de rode bal, want die kan de ballen opeten.");
 		startDT();
 	}
-	else if(modus == "5" || modus == "Versus"  || modus == "versus"){
+	else if(modus == "4" || modus == "Versus"  || modus == "versus"){
 		g1 = false; g2 = false; g3 = false; g4 = false; g5 = true;
 		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw L.SHIFT om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
 		alert("Het doel van het spel is om de andere speler neer te schieten door in een richting te duwen terwijl je al in die richting aan het bewegen bent. Iedere speler heeft een maximum van 50 ballen, als je meer dan 50 ballen schiet word je oudste bal verwijderd");
 		startVersus();
+	}
+	else if(modus == "5" || modus == "Snijdertje"  || modus == "snijdertje"){
+		g1 = true; g2 = false; g3 = false; g4 = false; g5 = false;
+		alert("Dit is een spelmodus voor 3 spelers, bestuurd door de ZQSD (Duw L.SHIFT om tussen ZQSD en WASD te switchen.) toetsen, pijltjes toetsen en de 5, 1, 2, 3 toetsen (op een numpad). Het is aangeraden om een tweede toetsenbord te koppelen om dit te spelen.");
+		alert("De regels van het spel zijn als volgt: Je hebt een jager (Groene circel rond de bal), een prooi (De bal die aan de lijn vastzit maar geen circel rond zich heeft) en een helper. Het doel van de jager is om de prooi te vangen, het doel van de prooi en de helper is om niet gepakt te worden. De helper kan de prooi helpen door de groene lijn te doorkruisen, hierdoor wordt hij de jager, en de prooi wordt de helper. De helper kan ook helpen door tegen de jager te botsen, waardoor ze allebei naar achter gestoten worden, pas alleen op voor de lijn, want als je daar in buurt komt kan je de prooi worden en gevangen worden door de jager.");
+		startCut();
 	}
 	else{
 		alert("Dat is geen optie.");
@@ -1005,9 +1031,9 @@ function drawSDT (){
 				xPosBlue = -15; yPosBlue = -15;
 				ballCountBlue = ballCount + 1;
 				if(redHit == true){
-					blueCount++;
+					blueCountDuo++;
 					ballCountDiff = ballCountBlue - ballCountRed;
-					alert("Rood heeft " + ballCountRed + " ballen kunnen ontwijken, maar Blauw is gewonnen door " + ballCountBlue + " ballen te ontwijken, " + ballCountDiff + " ballen meer. De scores zijn nu: Rood: " + redCount + ", Blauw: " + blueCount + ".");
+					alert("Rood heeft " + ballCountRed + " ballen kunnen ontwijken, maar Blauw is gewonnen door " + ballCountBlue + " ballen te ontwijken, " + ballCountDiff + " ballen meer. De scores zijn nu: Blauw: " + blueCountDuo + ", Rood: " + redCountDuo + ".");
 					startDT();
 				}
 			}
@@ -1017,9 +1043,9 @@ function drawSDT (){
 				xPosRed = -15; yPosRed = -15;
 				ballCountRed = ballCount + 1;
 				if(blueHit == true){
-					redCount++;
+					redCountDuo++;
 					ballCountDiff = ballCountRed - ballCountBlue;
-					alert("Blauw heeft " + ballCountBlue + " ballen kunnen ontwijken, maar Rood is gewonnen door " + ballCountRed + " ballen te ontwijken, " + ballCountDiff + " ballen meer. De scores zijn nu: Rood: " + redCount + ", Blauw: " + blueCount + ".");
+					alert("Blauw heeft " + ballCountBlue + " ballen kunnen ontwijken, maar Rood is gewonnen door " + ballCountRed + " ballen te ontwijken, " + ballCountDiff + " ballen meer. De scores zijn nu: Blauw: " + blueCountDuo + ", Rood: " + redCountDuo + ".");
 					startDT();
 				}
 			}
@@ -1371,11 +1397,13 @@ function drawVersus (){
 		var redDistance = redDistanceX*redDistanceX + redDistanceY*redDistanceY;
 
 		if(redDistance < 400 && shootArrayColor[i] == "blue"){
-			alert("Blauw heeft gewonnen.");
+			blueCountVersus++;
+			alert("Blauw heeft gewonnen. De scores zijn nu: Blauw: " + blueCountVersus + ", Rood: " + redCountVersus + ".");
 			startVersus();
 		}
 		if(blueDistance < 400 && shootArrayColor[i] == "red"){
-			alert("Rood heeft gewonnen.");
+			redCountVersus++;
+			alert("Rood heeft gewonnen. De scores zijn nu: Blauw: " + blueCountVersus + ", Rood: " + redCountVersus + ".");
 			startVersus();
 		}
 	}
