@@ -97,25 +97,25 @@ function start (){
 	}
 	else if(modus == "2" || modus == "Duo"  || modus == "duo"){
 		g1 = false; g2 = false; g3 = true; g4 = false; g5 = false;
-		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw L.SHIFT om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
+		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw C om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
 		alert("Het doel van het spel is om zo lang mogelijk te overleven door de paarse ballen to ontwijken, en om langer te leven dan de andere.");
 		startDT();
 	}
 	else if(modus == "3" || modus == "Team"  || modus == "team"){
 		g1 = false; g2 = false; g3 = false; g4 = true; g5 = false;
-		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw L.SHIFT om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
+		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw C om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
 		alert("Het doel van het spel is om zo lang mogelijk te overleven door de paarse ballen to ontwijken, maar je moet samenwerken met de rode bal, want die kan de ballen opeten.");
 		startDT();
 	}
 	else if(modus == "4" || modus == "Versus"  || modus == "versus"){
 		g1 = false; g2 = false; g3 = false; g4 = false; g5 = true;
-		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw L.SHIFT om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
+		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw C om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
 		alert("Het doel van het spel is om de andere speler neer te schieten door in een richting te duwen terwijl je al in die richting aan het bewegen bent. Iedere speler heeft een maximum van 50 ballen, als je meer dan 50 ballen schiet word je oudste bal verwijderd");
 		startVersus();
 	}
 	else if(modus == "5" || modus == "Snijdertje"  || modus == "snijdertje"){
 		g1 = true; g2 = false; g3 = false; g4 = false; g5 = false;
-		alert("Dit is een spelmodus voor 3 spelers, bestuurd door de ZQSD (Duw L.SHIFT om tussen ZQSD en WASD te switchen.) toetsen, pijltjes toetsen en de 5, 1, 2, 3 toetsen (op een numpad). Het is aangeraden om een tweede toetsenbord te koppelen om dit te spelen.");
+		alert("Dit is een spelmodus voor 3 spelers, bestuurd door de ZQSD (Duw C om tussen ZQSD en WASD te switchen.) toetsen, pijltjes toetsen en de 5, 1, 2, 3 toetsen (op een numpad). Het is aangeraden om een tweede toetsenbord te koppelen om dit te spelen.");
 		alert("De regels van het spel zijn als volgt: Je hebt een jager (Groene circel rond de bal), een prooi (De bal die aan de lijn vastzit maar geen circel rond zich heeft) en een helper. Het doel van de jager is om de prooi te vangen, het doel van de prooi en de helper is om niet gepakt te worden. De helper kan de prooi helpen door de groene lijn te doorkruisen, hierdoor wordt hij de jager, en de prooi wordt de helper. De helper kan ook helpen door tegen de jager te botsen, waardoor ze allebei naar achter gestoten worden, pas alleen op voor de lijn, want als je daar in buurt komt kan je de prooi worden en gevangen worden door de jager.");
 		startCut();
 	}
@@ -337,8 +337,8 @@ function checkKeyDown(e) {
     if (e.keyCode == '13'){
         //enter
     }
-    if (e.keyCode == '16'){
-        //l.shift
+    if (e.keyCode == '67'){
+        //c
         if(zqsd == true){
         	zqsd = false;
         }
