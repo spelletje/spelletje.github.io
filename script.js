@@ -443,21 +443,33 @@ function draw (){
 		if(yPosRed >= 15){
         	yPosRed -= 3;
 		}
+		else{
+			moveRed = "";
+		}
 	}
 	else if(moveRed == "down"){
 		if(yPosRed <= window.innerHeight - 15){
         	yPosRed += 3;
+		}
+		else{
+			moveRed = "";
 		}
 	}
 	else if(moveRed == "left"){
 		if(xPosRed >= 15){
 		    xPosRed -= 3;
 	    }
+	    else{
+			moveRed = "";
+		}
 	}
 	else if( moveRed == "right"){
 		if(xPosRed <= window.innerWidth - 15){
 	    	xPosRed += 3;
         }
+        else{
+			moveRed = "";
+		}
 	}
 
 	if(movePurple == "up"){
