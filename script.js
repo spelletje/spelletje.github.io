@@ -4,8 +4,8 @@ var context = canvas.getContext("2d");
 
 //the game mode of choice
 var modus;
-var g1; var g2; var g3; var g4; var g5;
-//g1 = snijdertje, g2 = solo, g3 = duo, g4 = team g5 = versus
+var g1; var g2; var g3; var g4; var g5; var g6;
+//g1 = snijdertje, g2 = solo, g3 = duo, g4 = team g5 = versus g6 = versus bot
 
 //X & Y values of the balls
 var xPosPurple; var yPosPurple;
@@ -21,7 +21,7 @@ var movePurple;
 var refresh;
 
 //controls
-var zqsd = true;
+var zqsd = false;
 
 
 //SNIJDERTJE variables
@@ -53,6 +53,12 @@ var hold = [false, false, false, false, false, false, false, false];
 var distanceBalls = [];
 var ballStop = [];
 var blueCountVersus = 0; var redCountVersus = 0;
+
+//PAYERVSBOT variables
+var count = 0;
+var distanceStart = 0;
+var direction = Math.floor((Math.random() * 4) + 1);
+var random;
 
 
 function start (){
@@ -87,37 +93,43 @@ function start (){
 	blueCountVersus = 0; redCountVersus = 0;
 
 
-	modus = prompt("Welke spelmodus wil je spelen? Solo(1), Duo(2), Team(3), Versus(4) of Snijdertje(5). Typ de naam of het nummer in om te kiezen, duw ESC om opnieuw te kiezen.");
+	modus = prompt("Welke spelmodus wil je spelen? Solo(1), Versus Bot(2), Duo(3), Team(4), Versus(5) of Snijdertje(6). Typ de naam of het nummer in om te kiezen, duw ESC om opnieuw te kiezen.");
 
 	if(modus == "1" || modus == "Solo"  || modus == "solo"){
-		g1 = false; g2 = true; g3 = false; g4 = false; g5 = false;
+		g1 = false; g2 = true; g3 = false; g4 = false; g5 = false; g6 = false;
 		alert("Dit is een spelmodus voor 1 speler, bestuurd door de pijltjes toetsen.");
-		alert("Het doel van het spel is om zo lang mogelijk te overleven door de paarse ballen to ontwijken.");
+		alert("Het doel van het spel is om zo lang mogelijk te overleven door de paarse ballen te ontwijken.");
 		startSolo();
 	}
-	else if(modus == "2" || modus == "Duo"  || modus == "duo"){
-		g1 = false; g2 = false; g3 = true; g4 = false; g5 = false;
+	else if(modus == "3" || modus == "Duo"  || modus == "duo"){
+		g1 = false; g2 = false; g3 = true; g4 = false; g5 = false; g6 = false;
 		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw C om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
 		alert("Het doel van het spel is om zo lang mogelijk te overleven door de paarse ballen to ontwijken, en om langer te leven dan de andere.");
-		startDT();
+		startDTVb();
 	}
-	else if(modus == "3" || modus == "Team"  || modus == "team"){
-		g1 = false; g2 = false; g3 = false; g4 = true; g5 = false;
+	else if(modus == "4" || modus == "Team"  || modus == "team"){
+		g1 = false; g2 = false; g3 = false; g4 = true; g5 = false; g6 = false;
 		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw C om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
 		alert("Het doel van het spel is om zo lang mogelijk te overleven door de paarse ballen to ontwijken, maar je moet samenwerken met de rode bal, want die kan de ballen opeten.");
-		startDT();
+		startDTVb();
 	}
-	else if(modus == "4" || modus == "Versus"  || modus == "versus"){
-		g1 = false; g2 = false; g3 = false; g4 = false; g5 = true;
+	else if(modus == "5" || modus == "Versus"  || modus == "versus"){
+		g1 = false; g2 = false; g3 = false; g4 = false; g5 = true; g6 = false;
 		alert("Dit is een spelmodus voor 2 spelers, bestuurd door de ZQSD (Duw C om tussen ZQSD en WASD te switchen.) en de pijltjes toetsen.");
 		alert("Het doel van het spel is om de andere speler neer te schieten door in een richting te duwen terwijl je al in die richting aan het bewegen bent. Iedere speler heeft een maximum van 50 ballen, als je meer dan 50 ballen schiet word je oudste bal verwijderd");
 		startVersus();
 	}
-	else if(modus == "5" || modus == "Snijdertje"  || modus == "snijdertje"){
-		g1 = true; g2 = false; g3 = false; g4 = false; g5 = false;
+	else if(modus == "6" || modus == "Snijdertje"  || modus == "snijdertje"){
+		g1 = true; g2 = false; g3 = false; g4 = false; g5 = false; g6 = false;
 		alert("Dit is een spelmodus voor 3 spelers, bestuurd door de ZQSD (Duw C om tussen ZQSD en WASD te switchen.) toetsen, pijltjes toetsen en de 5, 1, 2, 3 toetsen (op een numpad). Het is aangeraden om een tweede toetsenbord te koppelen om dit te spelen.");
-		alert("De regels van het spel zijn als volgt: Je hebt een jager (Groene circel rond de bal), een prooi (De bal die aan de lijn vastzit maar geen circel rond zich heeft) en een helper. Het doel van de jager is om de prooi te vangen, het doel van de prooi en de helper is om niet gepakt te worden. De helper kan de prooi helpen door de groene lijn te doorkruisen, hierdoor wordt hij de prooi, en de prooi wordt de helper. De helper kan ook helpen door tegen de jager te botsen, waardoor ze allebei naar achter gestoten worden, pas alleen op voor de lijn, want als je daar in buurt komt kan je de prooi worden en gevangen worden door de jager.");
+		alert("De regels van het spel zijn als volgt: Je hebt een jager (Groene circel rond de bal), een prooi (De bal die aan de lijn vastzit maar geen circel rond zich heeft) en een helper. Het doel van de jager is om de prooi te vangen, het doel van de prooi en de helper is om niet gepakt te worden. De helper kan de prooi helpen door de groene lijn te doorkruisen, hierdoor wordt hij de jager, en de prooi wordt de helper. De helper kan ook helpen door tegen de jager te botsen, waardoor ze allebei naar achter gestoten worden, pas alleen op voor de lijn, want als je daar in buurt komt kan je de prooi worden en gevangen worden door de jager.");
 		startCut();
+	}
+	else if(modus == "2" || modus == "Versusbot"  || modus == "versusbot"){
+		g1 = false; g2 = false; g3 = false; g4 = false; g5 = false; g6 = true;
+		alert("Dit is een spelmodus voor 1 speler, bestuurd door de pijltjes toetsen.");
+		alert("Het doel van het spel is om zo lang mogelijk te overleven door de rode bal te ontwijken.");
+		startDTVb();
 	}
 	else{
 		alert("Dat is geen optie.");
@@ -173,8 +185,8 @@ function startSolo (){
 	refresh = setInterval(draw, 5);
 }
 
-//initialise "duo" or "team"
-function startDT (){
+//initialise "duo", "team" or "versus bot"
+function startDTVb (){
 	//set canvas fullscreen
 	canvas.setAttribute("width", window.innerWidth);
 	canvas.setAttribute("height", window.innerHeight);
@@ -474,16 +486,19 @@ function draw (){
 		drawCut();
 	}
 	else if(g2 == true){
-		drawSDT();
+		drawSDTVb();
 	}
 	else if(g3 == true){
-		drawSDT();
+		drawSDTVb();
 	}
 	else if(g4 == true){
-		drawSDT();
+		drawSDTVb();
 	}
 	else if(g5 == true){
 		drawVersus();
+	}
+	else if(g6 == true){
+		drawSDTVb();
 	}
 }
 
@@ -856,7 +871,8 @@ function drawCut (){
 }
 
 //duo, team or solo
-function drawSDT (){
+function drawSDTVb (){
+	count++;
 	if(blueHit == false){
 		//draw blue
 		context.fillStyle = "blue"; 
@@ -877,83 +893,58 @@ function drawSDT (){
 		}
 	}
 
-	//spawn enemies
-	drawCount++;
-	if(drawCount % 200 == 0){
-		ballCount++;
-        var random = Math.floor(Math.random() * 4) + 1;
-        if(random == 1){
-        	enemyXposArray.push(5); enemyYposArray.push(5);
-        	context.fillStyle = "purple"; 
-			context.beginPath();
-			context.arc(enemyXposArray[ballCount],enemyYposArray[ballCount],5,0,Math.PI*2);
-			context.closePath();
-			context.fill();
-        }
-        else if(random == 2){
-        	enemyXposArray.push(window.innerWidth - 5); enemyYposArray.push(5);
-        	context.fillStyle = "purple"; 
-			context.beginPath();
-			context.arc(enemyXposArray[ballCount],enemyYposArray[ballCount],5,0,Math.PI*2);
-			context.closePath();
-			context.fill();
-        }
-        else if(random == 3){
-        	enemyXposArray[ballCount] = 5; enemyYposArray[ballCount] = window.innerHeight - 5;
-        	context.fillStyle = "purple"; 
-			context.beginPath();
-			context.arc(enemyXposArray[ballCount],enemyYposArray[ballCount],5,0,Math.PI*2);
-			context.closePath();
-			context.fill();
-        }
-        else if(random == 4){
-        	enemyXposArray[ballCount] = window.innerWidth - 5; enemyYposArray[ballCount] = window.innerHeight - 5;
-        	context.fillStyle = "purple"; 
-			context.beginPath();
-			context.arc(enemyXposArray[ballCount],enemyYposArray[ballCount],5,0,Math.PI*2);
-			context.closePath();
-			context.fill();
-        }
-    }
-
-    //redraw enemies
-    for(var i = 0; i < ballCount + 1; i++){
-    	context.fillStyle = "purple"; 
-		context.beginPath();
-		context.arc(enemyXposArray[i],enemyYposArray[i],5,0,Math.PI*2);
-		context.closePath();
-		context.fill();
-    }
-
-    //home enemies
-    if((g3 != true) || redHit == true){
-	    for(var i = 0; i < 4; i++){
-	    	if(enemyXposArray[ballCount - i] >= xPosBlue + 5){
-	    		enemyXposArray[ballCount - i] -= 1.5;
-	    	}
-	    	else if(enemyXposArray[ballCount - i] <= xPosBlue - 5){
-	    		enemyXposArray[ballCount - i] += 1.5;
-	    	}
-
-	    	if(enemyYposArray[ballCount - i] >= yPosBlue + 5){
-	    		enemyYposArray[ballCount - i] -= 1.5;
-	    	}
-	    	else if(enemyYposArray[ballCount - i] <= yPosBlue - 5){
-	    		enemyYposArray[ballCount - i] += 1.5;
-	    	}
+	if(g6 == false){
+		//spawn enemies
+		drawCount++;
+		if(drawCount % 200 == 0){
+			ballCount++;
+	        var random = Math.floor(Math.random() * 4) + 1;
+	        if(random == 1){
+	        	enemyXposArray.push(5); enemyYposArray.push(5);
+	        	context.fillStyle = "purple"; 
+				context.beginPath();
+				context.arc(enemyXposArray[ballCount],enemyYposArray[ballCount],5,0,Math.PI*2);
+				context.closePath();
+				context.fill();
+	        }
+	        else if(random == 2){
+	        	enemyXposArray.push(window.innerWidth - 5); enemyYposArray.push(5);
+	        	context.fillStyle = "purple"; 
+				context.beginPath();
+				context.arc(enemyXposArray[ballCount],enemyYposArray[ballCount],5,0,Math.PI*2);
+				context.closePath();
+				context.fill();
+	        }
+	        else if(random == 3){
+	        	enemyXposArray[ballCount] = 5; enemyYposArray[ballCount] = window.innerHeight - 5;
+	        	context.fillStyle = "purple"; 
+				context.beginPath();
+				context.arc(enemyXposArray[ballCount],enemyYposArray[ballCount],5,0,Math.PI*2);
+				context.closePath();
+				context.fill();
+	        }
+	        else if(random == 4){
+	        	enemyXposArray[ballCount] = window.innerWidth - 5; enemyYposArray[ballCount] = window.innerHeight - 5;
+	        	context.fillStyle = "purple"; 
+				context.beginPath();
+				context.arc(enemyXposArray[ballCount],enemyYposArray[ballCount],5,0,Math.PI*2);
+				context.closePath();
+				context.fill();
+	        }
 	    }
-	}
-	else if(blueHit == false){
-		for(var i = 0; i < 4; i++){
-			var xDistanceBlue = xPosBlue - enemyXposArray[ballCount - i];
-			var yDistanceBlue = yPosBlue - enemyYposArray[ballCount - i];
-			var distanceBlue = xDistanceBlue*xDistanceBlue + yDistanceBlue*yDistanceBlue;
 
-			var xDistanceRed = xPosRed - enemyXposArray[ballCount - i];
-			var yDistanceRed = yPosRed - enemyYposArray[ballCount - i];
-			var distanceRed = xDistanceRed*xDistanceRed + yDistanceRed*yDistanceRed;
+	    //redraw enemies
+	    for(var i = 0; i < ballCount + 1; i++){
+	    	context.fillStyle = "purple"; 
+			context.beginPath();
+			context.arc(enemyXposArray[i],enemyYposArray[i],5,0,Math.PI*2);
+			context.closePath();
+			context.fill();
+	    }
 
-			if(distanceBlue <= distanceRed){
+	    //home enemies
+	    if((g3 != true) || redHit == true){
+		    for(var i = 0; i < 4; i++){
 		    	if(enemyXposArray[ballCount - i] >= xPosBlue + 5){
 		    		enemyXposArray[ballCount - i] -= 1.5;
 		    	}
@@ -967,8 +958,52 @@ function drawSDT (){
 		    	else if(enemyYposArray[ballCount - i] <= yPosBlue - 5){
 		    		enemyYposArray[ballCount - i] += 1.5;
 		    	}
+		    }
+		}
+		else if(blueHit == false){
+			for(var i = 0; i < 4; i++){
+				var xDistanceBlue = xPosBlue - enemyXposArray[ballCount - i];
+				var yDistanceBlue = yPosBlue - enemyYposArray[ballCount - i];
+				var distanceBlue = xDistanceBlue*xDistanceBlue + yDistanceBlue*yDistanceBlue;
+
+				var xDistanceRed = xPosRed - enemyXposArray[ballCount - i];
+				var yDistanceRed = yPosRed - enemyYposArray[ballCount - i];
+				var distanceRed = xDistanceRed*xDistanceRed + yDistanceRed*yDistanceRed;
+
+				if(distanceBlue <= distanceRed){
+			    	if(enemyXposArray[ballCount - i] >= xPosBlue + 5){
+			    		enemyXposArray[ballCount - i] -= 1.5;
+			    	}
+			    	else if(enemyXposArray[ballCount - i] <= xPosBlue - 5){
+			    		enemyXposArray[ballCount - i] += 1.5;
+			    	}
+
+			    	if(enemyYposArray[ballCount - i] >= yPosBlue + 5){
+			    		enemyYposArray[ballCount - i] -= 1.5;
+			    	}
+			    	else if(enemyYposArray[ballCount - i] <= yPosBlue - 5){
+			    		enemyYposArray[ballCount - i] += 1.5;
+			    	}
+				}
+				else {
+			    	if(enemyXposArray[ballCount - i] >= xPosRed + 5){
+			    		enemyXposArray[ballCount - i] -= 1.5;
+			    	}
+			    	else if(enemyXposArray[ballCount - i] <= xPosRed - 5){
+			    		enemyXposArray[ballCount - i] += 1.5;
+			    	}
+
+			    	if(enemyYposArray[ballCount - i] >= yPosRed + 5){
+			    		enemyYposArray[ballCount - i] -= 1.5;
+			    	}
+			    	else if(enemyYposArray[ballCount - i] <= yPosRed - 5){
+			    		enemyYposArray[ballCount - i] += 1.5;
+			    	}
+				}
 			}
-			else {
+		}
+		else{
+			for(var i = 0; i < 4; i++){
 		    	if(enemyXposArray[ballCount - i] >= xPosRed + 5){
 		    		enemyXposArray[ballCount - i] -= 1.5;
 		    	}
@@ -982,95 +1017,113 @@ function drawSDT (){
 		    	else if(enemyYposArray[ballCount - i] <= yPosRed - 5){
 		    		enemyYposArray[ballCount - i] += 1.5;
 		    	}
-			}
+		    }
 		}
-	}
-	else{
-		for(var i = 0; i < 4; i++){
-	    	if(enemyXposArray[ballCount - i] >= xPosRed + 5){
-	    		enemyXposArray[ballCount - i] -= 1.5;
-	    	}
-	    	else if(enemyXposArray[ballCount - i] <= xPosRed - 5){
-	    		enemyXposArray[ballCount - i] += 1.5;
-	    	}
 
-	    	if(enemyYposArray[ballCount - i] >= yPosRed + 5){
-	    		enemyYposArray[ballCount - i] -= 1.5;
-	    	}
-	    	else if(enemyYposArray[ballCount - i] <= yPosRed - 5){
-	    		enemyYposArray[ballCount - i] += 1.5;
-	    	}
-	    }
-	}
-
-    //collision detection
-    if(g2 == true){
-	    for(var i = 0; i < ballCount + 1; i++){
-		    var xDistance = xPosBlue - enemyXposArray[i];
-			var yDistance = yPosBlue - enemyYposArray[i];
-			var distance = xDistance*xDistance + yDistance*yDistance;
-			if(distance <= 200){
-				ballCount++;
-				alert("Je hebt " + ballCount + " ballen kunnen ontwijken.");
-				startSolo();
-			}
-		}
-	}
-	else if(g3 == true){
-		for(var i = 0; i < ballCount + 1; i++){
-		    var xDistanceBlue = xPosBlue - enemyXposArray[i];
-			var yDistanceBlue = yPosBlue - enemyYposArray[i];
-			var distanceBlue = xDistanceBlue*xDistanceBlue + yDistanceBlue*yDistanceBlue;
-
-			var xDistanceRed = xPosRed - enemyXposArray[i];
-			var yDistanceRed = yPosRed - enemyYposArray[i];
-			var distanceRed = xDistanceRed*xDistanceRed + yDistanceRed*yDistanceRed;
-
-			if(distanceBlue <= 200){
-				blueHit = true;
-				xPosBlue = -15; yPosBlue = -15;
-				ballCountBlue = ballCount + 1;
-				if(redHit == true){
-					blueCountDuo++;
-					ballCountDiff = ballCountBlue - ballCountRed;
-					alert("Rood heeft " + ballCountRed + " ballen kunnen ontwijken, maar Blauw is gewonnen door " + ballCountBlue + " ballen te ontwijken, " + ballCountDiff + " ballen meer. De scores zijn nu: Blauw: " + blueCountDuo + ", Rood: " + redCountDuo + ".");
-					startDT();
-				}
-			}
-
-			if(distanceRed <= 200){
-				redHit = true;
-				xPosRed = -15; yPosRed = -15;
-				ballCountRed = ballCount + 1;
-				if(blueHit == true){
-					redCountDuo++;
-					ballCountDiff = ballCountRed - ballCountBlue;
-					alert("Blauw heeft " + ballCountBlue + " ballen kunnen ontwijken, maar Rood is gewonnen door " + ballCountRed + " ballen te ontwijken, " + ballCountDiff + " ballen meer. De scores zijn nu: Blauw: " + blueCountDuo + ", Rood: " + redCountDuo + ".");
-					startDT();
+	    //collision detection
+	    if(g2 == true){
+		    for(var i = 0; i < ballCount + 1; i++){
+			    var xDistance = xPosBlue - enemyXposArray[i];
+				var yDistance = yPosBlue - enemyYposArray[i];
+				var distance = xDistance*xDistance + yDistance*yDistance;
+				if(distance <= 200){
+					ballCount++;
+					alert("Je hebt " + ballCount + " ballen kunnen ontwijken.");
+					startSolo();
 				}
 			}
 		}
+		else if(g3 == true){
+			for(var i = 0; i < ballCount + 1; i++){
+			    var xDistanceBlue = xPosBlue - enemyXposArray[i];
+				var yDistanceBlue = yPosBlue - enemyYposArray[i];
+				var distanceBlue = xDistanceBlue*xDistanceBlue + yDistanceBlue*yDistanceBlue;
+
+				var xDistanceRed = xPosRed - enemyXposArray[i];
+				var yDistanceRed = yPosRed - enemyYposArray[i];
+				var distanceRed = xDistanceRed*xDistanceRed + yDistanceRed*yDistanceRed;
+
+				if(distanceBlue <= 200){
+					blueHit = true;
+					xPosBlue = -15; yPosBlue = -15;
+					ballCountBlue = ballCount + 1;
+					if(redHit == true){
+						blueCountDuo++;
+						ballCountDiff = ballCountBlue - ballCountRed;
+						alert("Rood heeft " + ballCountRed + " ballen kunnen ontwijken, maar Blauw is gewonnen door " + ballCountBlue + " ballen te ontwijken, " + ballCountDiff + " ballen meer. De scores zijn nu: Blauw: " + blueCountDuo + ", Rood: " + redCountDuo + ".");
+						startDTVb();
+					}
+				}
+
+				if(distanceRed <= 200){
+					redHit = true;
+					xPosRed = -15; yPosRed = -15;
+					ballCountRed = ballCount + 1;
+					if(blueHit == true){
+						redCountDuo++;
+						ballCountDiff = ballCountRed - ballCountBlue;
+						alert("Blauw heeft " + ballCountBlue + " ballen kunnen ontwijken, maar Rood is gewonnen door " + ballCountRed + " ballen te ontwijken, " + ballCountDiff + " ballen meer. De scores zijn nu: Blauw: " + blueCountDuo + ", Rood: " + redCountDuo + ".");
+						startDTVb();
+					}
+				}
+			}
+		}
+		else{
+			for(var i = 0; i < ballCount + 1; i++){
+			    var xDistanceBlue = xPosBlue - enemyXposArray[i];
+				var yDistanceBlue = yPosBlue - enemyYposArray[i];
+				var distanceBlue = xDistanceBlue*xDistanceBlue + yDistanceBlue*yDistanceBlue;
+
+				var xDistanceRed = xPosRed - enemyXposArray[i];
+				var yDistanceRed = yPosRed - enemyYposArray[i];
+				var distanceRed = xDistanceRed*xDistanceRed + yDistanceRed*yDistanceRed;
+
+				if(distanceRed <= 200){
+					eatCount++;
+					enemyXposArray[i] = -1000; enemyYposArray[i] = -1000;
+				}
+
+				if(distanceBlue <= 200){
+					ballCount++;
+					alert("Blauw heeft " + ballCount + " ballen kunnen ontwijken, Rood heeft " + eatCount + " ballen kunnen opeten.");
+					startDTVb();
+				}
+			}
+		}
 	}
-	else{
-		for(var i = 0; i < ballCount + 1; i++){
-		    var xDistanceBlue = xPosBlue - enemyXposArray[i];
-			var yDistanceBlue = yPosBlue - enemyYposArray[i];
-			var distanceBlue = xDistanceBlue*xDistanceBlue + yDistanceBlue*yDistanceBlue;
+	else {
+		var xDistance = xPosBlue - xPosRed;
+		var yDistance = yPosBlue - yPosRed;
+		var distance = xDistance*xDistance + yDistance*yDistance;
 
-			var xDistanceRed = xPosRed - enemyXposArray[i];
-			var yDistanceRed = yPosRed - enemyYposArray[i];
-			var distanceRed = xDistanceRed*xDistanceRed + yDistanceRed*yDistanceRed;
+		if(count % 5 == 0){
+		random = Math.floor((Math.random() * 2) + 1);
+			if(distanceStart < distance || moveRed == ""){
 
-			if(distanceRed <= 200){
-				eatCount++;
-				enemyXposArray[i] = -1000; enemyYposArray[i] = -1000;
+				distanceStart = distance;
+
+				if(random == 1){
+					direction += 1;
+					if(direction == 5){direction = 1};
+				}
+				else if(random == 2){
+					direction -= 1;
+					if(direction == 0){direction = 4};
+				}
+
+				if(direction == 1){moveRed = "up"}; if(direction == 2){moveRed = "left"}; if(direction == 3){moveRed = "down"}; if(direction == 4){moveRed = "right"}; 
 			}
-
-			if(distanceBlue <= 200){
-				ballCount++;
-				alert("Blauw heeft " + ballCount + " ballen kunnen ontwijken, Rood heeft " + eatCount + " ballen kunnen opeten.");
-				startDT();
+			else {
+				distanceStart = distance;
 			}
+		}
+
+	    //collision detection
+		if(distance <= 900){
+			var time = count / 200;
+			alert("Je hebt " + time + " seconden kunnen overleven.");
+			count = 0;
+			startDTVb();
 		}
 	}
 }
